@@ -8,6 +8,7 @@ local offset = {}
 local hovered = nil
 local dragging = nil
 local curve = nil
+local timer = 0
 
 function dashLine( p1, p2, dash, gap )
    local dy, dx = p2.y - p1.y, p2.x - p1.x
@@ -22,6 +23,10 @@ function dashLine( p1, p2, dash, gap )
       end
       love.graphics.line( nm * st, 0, nm * st + dash,0 )
    love.graphics.pop()
+end
+
+function lerp(a, b, t)
+    return a + (b - a) * t
 end
 
 function love.load()
@@ -45,6 +50,12 @@ function love.mousepressed(x, y, button)
         offset.y = y - dragging.y
         calcCurve()
     end
+end
+
+function love.update(dt)
+    timer = timer + 0.05
+    points[2].y = lerp(400, 600, math.sin(timer))
+    calcCurve()
 end
 
 function love.mousereleased(x, y, button)
@@ -73,7 +84,6 @@ function love.draw()
     -- lines
     love.graphics.setColor(200, 200, 200, 120)
     for i = 1, #points-1 do
-        -- love.graphics.line(points[i].x, points[i].y, points[i+1].x, points[i+1].y)
         dashLine(points[i], points[i+1], 5, 5)
     end
 
