@@ -1,13 +1,28 @@
 local points = {
-    { x = 150, y = 400, r = 8 },
-    { x = 400, y = 200, r = 5 },
-    { x = 650, y = 400, r = 8 }
+    { x = 150, y = 400, r = 5 },
+    { x = 400, y = 200, r = 3 },
+    { x = 650, y = 400, r = 5 }
 }
 
 local offset = {}
 local hovered = nil
 local dragging = nil
 local curve = nil
+
+function dashLine( p1, p2, dash, gap )
+   local dy, dx = p2.y - p1.y, p2.x - p1.x
+   local an, st = math.atan2( dy, dx ), dash + gap
+   local len = math.sqrt( dx*dx + dy*dy )
+   local nm	= ( len - dash ) / st
+   love.graphics.push()
+      love.graphics.translate( p1.x, p1.y )
+      love.graphics.rotate( an )
+      for i = 0, nm do
+         love.graphics.line( i * st, 0, i * st + dash, 0 )
+      end
+      love.graphics.line( nm * st, 0, nm * st + dash,0 )
+   love.graphics.pop()
+end
 
 function love.load()
     love.graphics.setBackgroundColor(255, 250, 240)
@@ -56,9 +71,10 @@ end
 
 function love.draw()
     -- lines
-    love.graphics.setColor(200, 200, 200, 70)
+    love.graphics.setColor(200, 200, 200, 120)
     for i = 1, #points-1 do
-        love.graphics.line(points[i].x, points[i].y, points[i+1].x, points[i+1].y)
+        -- love.graphics.line(points[i].x, points[i].y, points[i+1].x, points[i+1].y)
+        dashLine(points[i], points[i+1], 5, 5)
     end
 
     -- rendered curve
